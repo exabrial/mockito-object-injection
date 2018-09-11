@@ -1,6 +1,6 @@
 # Mockito Object Injection
 
-Inject Strings (or other objects) into your objects under test. Super easy to use. Skip straight to Examples and Usage if you know what you're looking for.
+Inject Strings (or other objects) into your `@InjectMocks` targets [objects under test] without booting a Spring, CDI, EJB, or other container. Super lightweight and easy to use. Skip straight to Examples and Usage if you know what you're looking for.
 
 ## Problem
 
@@ -31,12 +31,12 @@ If you wanted to write a _true unit test_ with no external dependencies, you'd p
 ```
 @ExtendWith({ MockitoExtension.class })
 public class MyControllerTest {
-	@InjectMocks
-	private MyController myController;
-	@Mock
-	private Logger log;
-	@Mock
-	private Authenticator auther;
+ @InjectMocks
+ private MyController myController;
+ @Mock
+ private Logger log;
+ @Mock
+ private Authenticator auther;
   
   public void testDoSomething() throws Exception {
    myController.doSomething();
@@ -54,4 +54,37 @@ There are a lot of well-definied beneifts to constructor injection that I won't 
 This JUnit5 extension allows you to arbitrarily set any field on your `@InjectMocks` [class under test] target. The injections happen _very late_; they happen when you call any non-private method on the class under test.
 
 
+```
+@ExtendWith({ MockitoExtension.class, InjectMapExtension.class })
+public class MyControllerTest {
+ @InjectMocks
+ private MyController myController;
+ @Mock
+ private Logger log;
+ @Mock
+ private Authenticator auther;
+ @InjectMap
+ private Map<String, Object> injectMap = new HashMap<>();
+ 
+ @BeforeEach
+ public void beforeEach() throws Exception {
+  injectMap.put("securityEnabled", Boolean.TRUE);
+ }
 
+ @AfterEach
+ public void afterEach() throws Exception {
+  injectMap.clear();
+ }
+  
+  public void testDoSomething_secEnabled() throws Exception {
+   myController.doSomething();
+   // wahoo no NPE! Test the "if then" half of the branch
+  }
+  
+  public void testDoSomething_secDisabled() throws Exception {
+   injectMap.put("securityEnabled", Boolean.FALSE);
+   myController.doSomething();
+   // wahoo no NPE! Test the "if else" half of branch
+  }
+ }
+```
