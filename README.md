@@ -26,7 +26,7 @@ public class MyController {
 }
 ```
 
-If you wanted to write a _true unit test*_ with no external dependencies, you'd probably want to mock your dependencies:
+If you wanted to write a _true unit test*_ with no external dependencies, you'd probably want to use Mockito mock your dependencies:
 
 ```
 @ExtendWith({ MockitoExtension.class })
@@ -45,7 +45,7 @@ public class MyControllerTest {
  }
 ```
 
-* _A true unit test means testing one unit of code, so firing up an Arquillian, Spring, or CDI container means you are no longer testing one thing. In Java, a class is generally considered the smallest testable unit of code testable, but there are also static methods and lambdas which might also fall into this category._
+* _A true unit test means testing one unit of code, so firing up an Arquillian, Spring, or CDI container means you are probably not testing just one thing. In Java, a class is generally considered the smallest testable unit of code testable, but there are also static methods and lambdas which might also fall into this category._
 
 Well... A lot of folks on the interwebs at this point will sigh loudly, rock back in their rocking chair, and hike up their trousers and yammer: "Well that kids is why we use CONSTRUCTOR INJECTION. You gootta expose that Boolean as a CONSTRUCTOOOR variable!!!" then proceed to continue to yell at the kids on their lawn.
 
