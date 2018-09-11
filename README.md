@@ -1,6 +1,6 @@
 # Mockito Object Injection
 
-Inject Strings (or other objects) into your `@InjectMocks` targets [objects under test] without booting a Spring, CDI, EJB, or other container. Super lightweight and easy to use. Skip straight to Examples and Usage if you know what you're looking for.
+Inject Strings (or other objects) into your `@InjectMocks` targets [objects under test] without booting a Spring, Weld, CDI, Arquillian, EJB, or other container. Super lightweight and easy to use. Skip straight to Examples and Usage if you know what you're looking for.
 
 ## Problem
 
@@ -26,7 +26,7 @@ public class MyController {
 }
 ```
 
-If you wanted to write a _true unit test_ with no external dependencies, you'd probably want to mock your dependencies:
+If you wanted to write a _true unit test*_ with no external dependencies, you'd probably want to mock your dependencies:
 
 ```
 @ExtendWith({ MockitoExtension.class })
@@ -44,6 +44,8 @@ public class MyControllerTest {
   }
  }
 ```
+
+* _A *true unit test* means testing one unit of code, so firing up an Arquillian, Spring, or CDI container means you are no longer testing one thing. In Java, a class is generally considered the smallest testable unit of code testable, but there are also static methods and lambdas which might also fall into this category._
 
 Well... A lot of folks on the interwebs at this poing will sigh loudly, rock back in their rocking chair, and hike up their trousers and yammer: _"Well that kids is why we use CONSTRUCTOR INJECTION. You gootta expose that Boolean as a contructor variable!!!"_ then proceed to continue to yell at the kids on their lawn.
 
