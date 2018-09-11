@@ -79,15 +79,15 @@ public class MyControllerTest {
   injectMap.clear();
  }
   
-  public void testDoSomething_secEnabled() throws Exception {
-   myController.doSomething();
-   // wahoo no NPE! Test the "if then" half of the branch
-  }
-  
-  public void testDoSomething_secDisabled() throws Exception {
-   injectMap.put("securityEnabled", Boolean.FALSE);
-   myController.doSomething();
-   // wahoo no NPE! Test the "if else" half of branch
-  }
+ public void testDoSomething_secEnabled() throws Exception {
+  myController.doSomething();
+  // wahoo no NPE! Test the "if then" half of the branch
  }
+  
+ public void testDoSomething_secDisabled() throws Exception {
+  injectMap.put("securityEnabled", Boolean.FALSE);
+  myController.doSomething();
+  // wahoo no NPE! Test the "if else" half of branch
+ }
+}
 ```
