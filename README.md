@@ -45,11 +45,11 @@ public class MyControllerTest {
  }
 ```
 
-* _A *true unit test* means testing one unit of code, so firing up an Arquillian, Spring, or CDI container means you are no longer testing one thing. In Java, a class is generally considered the smallest testable unit of code testable, but there are also static methods and lambdas which might also fall into this category._
+* _A true unit test means testing one unit of code, so firing up an Arquillian, Spring, or CDI container means you are no longer testing one thing. In Java, a class is generally considered the smallest testable unit of code testable, but there are also static methods and lambdas which might also fall into this category._
 
-Well... A lot of folks on the interwebs at this poing will sigh loudly, rock back in their rocking chair, and hike up their trousers and yammer: _"Well that kids is why we use CONSTRUCTOR INJECTION. You gootta expose that Boolean as a contructor variable!!!"_ then proceed to continue to yell at the kids on their lawn.
+Well... A lot of folks on the interwebs at this point will sigh loudly, rock back in their rocking chair, and hike up their trousers and yammer: "Well that kids is why we use CONSTRUCTOR INJECTION. You gootta expose that Boolean as a constructoor variable!!!" then proceed to continue to yell at the kids on their lawn.
 
-There are a lot of well-definied beneifts to constructor injection that I won't go into here. I don't like boilerplate code however, and I don't like generated code. So for me, constructor injection, despite it's advantages, brings a lot of verbosity and repitition to the table.
+There are a lot of well-defined benefits to constructor injection that I won't go into here. I don't like boilerplate code however, and I don't like generated code. So for me, constructor injection, despite it's advantages, brings a lot of verbosity and repetition to the table.
 
 ## Examples
 
