@@ -55,6 +55,9 @@ This JUnit5 extension allows you to arbitrarily set any field on your `@InjectMo
 
 
 ```
+import com.github.exabrial.junit5.injectmap.InjectMap;
+import com.github.exabrial.junit5.injectmap.InjectMapExtension;
+
 @ExtendWith({ MockitoExtension.class, InjectMapExtension.class })
 public class MyControllerTest {
  @InjectMocks
