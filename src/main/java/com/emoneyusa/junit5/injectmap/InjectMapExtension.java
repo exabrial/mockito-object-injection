@@ -1,6 +1,7 @@
 package com.emoneyusa.junit5.injectmap;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
@@ -60,7 +61,15 @@ public class InjectMapExtension implements BeforeTestExecutionCallback {
 					field.setAccessible(true);
 					field.set(handlerInjectionTarget, handlerInjectMap.get(fieldName));
 				}
-				return invokedMethod.invoke(handlerInjectionTarget, args);
+				try {
+					return invokedMethod.invoke(handlerInjectionTarget, args);
+				} catch (InvocationTargetException itEx) {
+					if (null != itEx.getCause()) {
+						throw itEx.getCause();
+					} else {
+						throw itEx;
+					}
+				}
 			}
 		};
 	}
