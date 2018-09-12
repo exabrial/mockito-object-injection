@@ -14,27 +14,6 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
 
-/**
- * <p>
- * Sets fields in your @InjectMock target.
- * </p>
- * 
- * <p>
- * Create a field in your test with this type:
- * </p>
- * 
- * <pre>
- * &#64;InjectionMap
- * private Map<String, Object> injectionMap = new HashMap<>();
- * </pre>
- * 
- * <p>
- * The map key should be the field name, and the value should be the value you
- * want injected. The injection happens _when any non-private method_ on
- * the @InjectMocks target is invoked.
- * </p>
- *
- */
 public class InjectMapExtension implements BeforeTestExecutionCallback {
 	@SuppressWarnings("unchecked")
 	@Override
