@@ -4,7 +4,7 @@ Inject Strings (or other objects) into your `@InjectMocks` targets [objects unde
 
 ## Problem
 
-Take this Spring Controller (or if you're using the much better CDI Framework, imagine this is `@AppplicationScoped`)
+Take this Spring Controller (or if you're using the far superior and modern CDI framework, imagine this is `@AppplicationScoped`)
 
 ```
 @Controller
@@ -92,4 +92,33 @@ public class MyControllerTest {
   // wahoo no NPE! Test the "if else" half of branch
  }
 }
+```
+
+## License
+
+All files are licensed Apache Source License 2.0. Please consider contributing any improvements you make back to the project.
+
+## Usage
+
+Maven Coordinates:
+
+```
+<dependency>
+ <groupId>org.junit.jupiter</groupId>
+ <artifactId>junit-jupiter-api</artifactId>
+ <version>5.2.0</version>
+ <scope>test</scope>
+</dependency>
+<dependency>
+ <groupId>org.mockito</groupId>
+ <artifactId>mockito-core</artifactId>
+ <version>2.22.0</version>
+ <scope>test</scope>
+</dependency>
+<dependency>
+ <groupId>com.github.exabrial</groupId>
+ <artifactId>mockito-object-injection</artifactId>
+ <version>1.0.0</version>
+ <scope>test</scope>
+</dependency>
 ```
