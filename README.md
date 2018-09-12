@@ -45,12 +45,6 @@ public class MyControllerTest {
  }
 ```
 
-* _A true unit test means testing one unit of code, so firing up an Arquillian, Spring, or CDI container means you are probably not testing just one thing. In Java, a class is generally considered the smallest testable unit of code testable, but there are also static methods and lambdas which might also fall into this category._
-
-Well... A lot of folks on the interwebs at this point will sigh loudly, rock back in their rocking chair, and hike up their trousers and yammer: _"Well that kids is why we use CONSTRUCTOR INJECTION. You gootta expose that Boolean as a CONSTRUCTOOOR variable!!!"_ then proceed to continue to yell at the kids on their lawn.
-
-There are a lot of well-defined benefits to constructor injection that I won't go into here. I don't like boilerplate code however, and I don't like generated code. So for me, constructor injection, despite it's advantages, brings a lot of verbosity and repetition to the table.
-
 ## Examples
 
 This JUnit5 extension allows you to arbitrarily set any field on your `@InjectMocks` [class under test] target. The injections happen _very late_; they happen when you call any non-private method on the class under test.
@@ -122,3 +116,11 @@ Maven Coordinates:
  <scope>test</scope>
 </dependency>
 ```
+
+## Philosophy Time
+
+* _A true unit test means testing one unit of code, so firing up an Arquillian, Spring, or CDI container means you are probably not testing just one thing. In Java, a class is generally considered the smallest testable unit of code testable, but there are also static methods and lambdas which might also fall into this category._
+
+Well... A lot of folks on the interwebs at this point will sigh loudly, rock back in their rocking chair, and hike up their trousers and yammer: _"Well that kids is why we use CONSTRUCTOR INJECTION. You gootta expose that Boolean as a CONSTRUCTOOOR variable!!!"_ then proceed to continue to yell at the kids on their lawn. 
+
+While I just finished mocking said people (pardon the pun), there are a lot of well-defined benefits to constructor injection that I won't go into here that are worth considering. I don't like boilerplate code however, and I don't like generated code. So for me, constructor injection, despite it's advantages, brings a lot of verbosity and repetition to the table. The right answer for YOUR organization on whether to use constructor versus field injection as convention depends highly on said organization's ability to follow a plan, to arbitrate conflict resolution, team cohesiveness, mutual respect, a non HIPPO decision process, and focus on business objectives... most of which are soft-skills which are outside the scope of this project. The goal of this project is to help you get to 100% branch coverage with with as little friction from your tech stack and leave the debate to the philosophers. Good luck, test your classes, and write great code!
