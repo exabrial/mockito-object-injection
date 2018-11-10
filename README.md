@@ -100,19 +100,19 @@ Maven Coordinates:
 <dependency>
  <groupId>org.junit.jupiter</groupId>
  <artifactId>junit-jupiter-api</artifactId>
- <version>5.2.0</version>
+ <version>5.3.1</version>
  <scope>test</scope>
 </dependency>
 <dependency>
  <groupId>org.mockito</groupId>
  <artifactId>mockito-core</artifactId>
- <version>2.22.0</version>
+ <version>2.23.0</version>
  <scope>test</scope>
 </dependency>
 <dependency>
  <groupId>com.github.exabrial</groupId>
  <artifactId>mockito-object-injection</artifactId>
- <version>1.0.1</version>
+ <version>1.0.2</version>
  <scope>test</scope>
 </dependency>
 ```
