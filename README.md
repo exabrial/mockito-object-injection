@@ -45,6 +45,8 @@ public class MyControllerTest {
  }
 ```
 
+* Testing a "unit" of code is a unit test. In Java, typically a class is the smallest unit of code.
+
 ## Examples
 
 This JUnit5 extension allows you to arbitrarily set any field on your `@InjectMocks` [class under test] target. The injections happen _very late_; they happen when you call any non-private method on the class under test.
@@ -107,15 +109,15 @@ Maven Coordinates:
 <dependency>
  <groupId>org.mockito</groupId>
  <artifactId>mockito-core</artifactId>
- <version>2.23.0</version>
+ <version>2.23.4</version>
  <scope>test</scope>
 </dependency>
 <dependency>
  <groupId>com.github.exabrial</groupId>
  <artifactId>mockito-object-injection</artifactId>
- <version>1.0.2</version>
+ <version>1.0.3</version>
  <scope>test</scope>
 </dependency>
 ```
 
-The final note is that it should extraordinarily obvious that per-test forking will produce undefined results when using `@InjectMocks`, and as such, per-test forking is not thread-safe for this test extension.
+The final note is that it should extraordinarily obvious that per-test forking will produce undefined results when using `@InjectMocks`, and as such, per-test forking is not thread-safe for this test extension. Hence the `@TestInstance(Lifecycle.PER_CLASS)` on the example.
