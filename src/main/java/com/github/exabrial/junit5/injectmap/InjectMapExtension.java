@@ -75,6 +75,7 @@ public class InjectMapExtension implements BeforeTestExecutionCallback {
 	private MethodHandler createMethodHandler(final Map<String, Object> handlerInjectMap, final Object handlerInjectionTarget,
 			final Map<String, List<Field>> fieldMap) {
 		return (proxy, invokedMethod, proceedMethod, args) -> {
+			invokedMethod.setAccessible(true);
 			for (String fieldName : handlerInjectMap.keySet()) {
 				for (Field field : fieldMap.get(fieldName)) {
 					field.setAccessible(true);
