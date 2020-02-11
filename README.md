@@ -56,7 +56,7 @@ This JUnit5 extension allows you to arbitrarily set any field on your `@InjectMo
 import com.github.exabrial.junit5.injectmap.InjectionMap;
 import com.github.exabrial.junit5.injectmap.InjectMapExtension;
 
-@TestInstance(Lifecycle.PER_CLASS)
+@TestInstance(Lifecycle.PER_METHOD)
 @ExtendWith({ MockitoExtension.class, InjectMapExtension.class })
 public class MyControllerTest {
  @InjectMocks
@@ -120,4 +120,4 @@ Maven Coordinates:
 </dependency>
 ```
 
-The final note is that it should extraordinarily obvious that per-test forking will produce undefined results when using `@InjectMocks`, and as such, per-test forking is not thread-safe for this test extension. Hence the `@TestInstance(Lifecycle.PER_CLASS)` on the example.
+The final note is that it should extraordinarily obvious that multithreading on the same test instances will cause problems. Set your forking policies accordingly to avoid race conditions.
