@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 
 @Retention(RUNTIME)
 @Target(FIELD)
-public @interface InjectionMap {
+public @interface InjectionSource {
 }

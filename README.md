@@ -4,7 +4,7 @@ Inject Strings (or other objects) into your `@InjectMocks` targets [objects unde
 
 ## Problem
 
-Take this Spring Controller (or if you're using the far superior and modern CDI framework, imagine this is `@AppplicationScoped`)
+Take this Spring Controller (or if you're using the far superior and modern CDI framework, think `@AppplicationScoped` instead of `@Controller` and `@Inject` instead of `@Autowired`)
 
 ```
 @Controller
@@ -40,7 +40,7 @@ public class MyControllerTest {
   
   public void testDoSomething() throws Exception {
    myController.doSomething();
-   // results in NPE
+   // results in NPE because myController.securityEnabled is null
   }
  }
 ```
@@ -56,8 +56,8 @@ This JUnit5 extension allows you to arbitrarily set any field on your `@InjectMo
 import com.github.exabrial.junit5.injectmap.InjectionMap;
 import com.github.exabrial.junit5.injectmap.InjectMapExtension;
 
-@TestInstance(Lifecycle.PER_METHOD)
-@ExtendWith({ MockitoExtension.class, InjectMapExtension.class })
+@TestInstance(Lifecycle.PER_CLASS)
+@ExtendWith({ MockitoExtension.class, InjectExtension.class })
 public class MyControllerTest {
  @InjectMocks
  private MyController myController;
@@ -65,31 +65,50 @@ public class MyControllerTest {
  private Logger log;
  @Mock
  private Authenticator auther;
- @InjectionMap
- private Map<String, Object> injectionMap = new HashMap<>();
+ @InjectionSource
+ private Boolean securityEnabled;
  
- @BeforeEach
- public void beforeEach() throws Exception {
-  injectionMap.put("securityEnabled", Boolean.TRUE);
- }
-
- @AfterEach
- public void afterEach() throws Exception {
-  injectionMap.clear();
- }
-  
  public void testDoSomething_secEnabled() throws Exception {
+  securityEnabled = Boolean.TRUE;
   myController.doSomething();
   // wahoo no NPE! Test the "if then" half of the branch
  }
   
  public void testDoSomething_secDisabled() throws Exception {
-  injectionMap.put("securityEnabled", Boolean.FALSE);
+  securityEnabled = Boolean.FALSE;
   myController.doSomething();
   // wahoo no NPE! Test the "if else" half of branch
  }
 }
 ```
+
+## PostConstruct invocation
+
+CDI and SpringFramework allow the use of `@PostConstruct`. This is like a constructor, except the method annotated will be invoked _after_ dependency injection is complete. This extension can be commanded to invoke the method annotated with `@PostConstruct` like so:
+
+
+```
+@ApplicationScoped
+public class MyController {
+ @Inject
+ private Logger log; 
+ 
+ @PostConstruct
+ private void postConstruct() {
+  log.info("initializing myController...");
+  ... some initialization code
+ }
+}
+```
+
+```
+ @InjectMocks
+ @InvokePostConstruct
+ private MyController myController;
+```
+
+Ref: https://docs.oracle.com/javaee/7/api/javax/annotation/PostConstruct.html
+
 
 ## License
 
@@ -103,19 +122,19 @@ Maven Coordinates:
 <dependency>
  <groupId>org.junit.jupiter</groupId>
  <artifactId>junit-jupiter-api</artifactId>
- <version>5.3.1</version>
+ <version>5.6.2</version>
  <scope>test</scope>
 </dependency>
 <dependency>
  <groupId>org.mockito</groupId>
  <artifactId>mockito-core</artifactId>
- <version>2.23.4</version>
+ <version>3.5.0</version>
  <scope>test</scope>
 </dependency>
 <dependency>
  <groupId>com.github.exabrial</groupId>
  <artifactId>mockito-object-injection</artifactId>
- <version>1.0.4</version>
+ <version>2.0.0</version>
  <scope>test</scope>
 </dependency>
 ```
