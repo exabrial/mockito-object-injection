@@ -1,8 +1,17 @@
 # Mockito Object Injection
 
-Inject Strings (or other objects) into your `@InjectMocks` targets [objects under test] without booting a Spring, Weld, CDI, Arquillian, EJB, or other container. Super lightweight and easy to use. Skip straight to Examples and Usage if you know what you're looking for.
+## Preamble
 
-## Problem
+* Mock testing leads to highly focused tests where every variable is controlled.
+* Dependency Injection + well structured programs + Mock testing = clean code codebase.
+
+The problem is, how does one Mock a String, Boolean, or other final type if those types are being Injected?
+
+## Summary 
+
+This Junit Extension allows you to inject Strings (or any other object) into your `@InjectMocks` targets [objects under test] without booting a Spring, Weld, CDI, Arquillian, EJB, or other container. It's super lightweight, over 100,000x faster than Arquillian, and easy to use.
+
+## Example Problem
 
 Take this Spring Controller (or if you're using the far superior and modern CDI framework, think `@AppplicationScoped` instead of `@Controller` and `@Inject` instead of `@Autowired`)
 
@@ -30,7 +39,7 @@ If you wanted to write a _true unit test*_ with no external dependencies, you'd 
 
 ```
 @ExtendWith({ MockitoExtension.class })
-public class MyControllerTest {
+class MyControllerTest {
  @InjectMocks
  private MyController myController;
  @Mock
@@ -38,7 +47,8 @@ public class MyControllerTest {
  @Mock
  private Authenticator auther;
   
-  public void testDoSomething() throws Exception {
+  @Test
+  void testDoSomething() throws Exception {
    myController.doSomething();
    // results in NPE because myController.securityEnabled is null
   }
@@ -47,7 +57,7 @@ public class MyControllerTest {
 
 * Testing a "unit" of code is a unit test. In Java, typically a class is the smallest unit of code.
 
-## Examples
+## Example Solution
 
 This JUnit5 extension allows you to arbitrarily set any field on your `@InjectMocks` [class under test] target. The injections happen _very late_; they happen when you call any non-private method on the class under test.
 
@@ -58,7 +68,7 @@ import com.github.exabrial.junit5.injectmap.InjectMapExtension;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith({ MockitoExtension.class, InjectExtension.class })
-public class MyControllerTest {
+class MyControllerTest {
  @InjectMocks
  private MyController myController;
  @Mock
@@ -68,13 +78,15 @@ public class MyControllerTest {
  @InjectionSource
  private Boolean securityEnabled;
  
- public void testDoSomething_secEnabled() throws Exception {
+ @Test
+ void testDoSomething_secEnabled() throws Exception {
   securityEnabled = Boolean.TRUE;
   myController.doSomething();
   // wahoo no NPE! Test the "if then" half of the branch
  }
-  
- public void testDoSomething_secDisabled() throws Exception {
+ 
+ @Test 
+ void testDoSomething_secDisabled() throws Exception {
   securityEnabled = Boolean.FALSE;
   myController.doSomething();
   // wahoo no NPE! Test the "if else" half of branch
@@ -82,7 +94,7 @@ public class MyControllerTest {
 }
 ```
 
-## PostConstruct invocation
+## @PostConstruct invocation
 
 CDI and SpringFramework allow the use of `@PostConstruct`. This is like a constructor, except the method annotated will be invoked _after_ dependency injection is complete. This extension can be commanded to invoke the method annotated with `@PostConstruct` like so:
 
@@ -102,9 +114,17 @@ public class MyController {
 ```
 
 ```
+@TestInstance(Lifecycle.PER_CLASS)
+@ExtendWith({ MockitoExtension.class, InjectExtension.class })
+class MyControllerTest {
+
  @InjectMocks
  @InvokePostConstruct
+ // The postConstruct on this controller will be invoked
  private MyController myController;
+ 
+ @Test
+ void testSometing()
 ```
 
 Ref: https://docs.oracle.com/javaee/7/api/javax/annotation/PostConstruct.html
