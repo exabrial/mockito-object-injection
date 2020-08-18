@@ -3,13 +3,13 @@
 ## Preamble
 
 * Mock testing leads to highly focused tests where every variable is controlled.
-* Dependency Injection + well structured programs + Mock testing = clean code codebase.
+* Dependency Injection + well structured programs + Mock testing = super clean codebase.
 
 The problem is, how does one Mock a String, Boolean, or other final type if those types are being Injected?
 
 ## Summary 
 
-This Junit Extension allows you to inject Strings (or any other object) into your `@InjectMocks` targets [objects under test] without booting a Spring, Weld, CDI, Arquillian, EJB, or other container. It's super lightweight, over 100,000x faster than Arquillian, and easy to use.
+This Junit Extension allows you to inject Strings (or any other object) into your `@InjectMocks` targets [objects under test] without booting a Spring, Weld, CDI, Arquillian, EJB, or other container. It's super lightweight, over 100,000x faster than booting Arquillian, and easy to use.
 
 ## Example Problem
 
