@@ -154,7 +154,7 @@ Maven Coordinates:
 <dependency>
  <groupId>com.github.exabrial</groupId>
  <artifactId>mockito-object-injection</artifactId>
- <version>2.0.1</version>
+ <version>2.0.2</version>
  <scope>test</scope>
 </dependency>
 ```
