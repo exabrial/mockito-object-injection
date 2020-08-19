@@ -84,9 +84,11 @@ public class InjectExtension implements BeforeTestExecutionCallback {
 		return (proxy, invokedMethod, proceedMethod, args) -> {
 			invokedMethod.setAccessible(true);
 			for (String fieldName : injectMap.keySet()) {
-				for (Field field : fieldMap.get(fieldName)) {
-					field.setAccessible(true);
-					field.set(injectionTarget, injectMap.get(fieldName).get(testInstance));
+				for (Field targetField : fieldMap.get(fieldName)) {
+					Field sourceField = injectMap.get(fieldName);
+					sourceField.setAccessible(true);
+					targetField.setAccessible(true);
+					targetField.set(injectionTarget, sourceField.get(testInstance));
 				}
 			}
 			if (postConstructMethod != null) {
