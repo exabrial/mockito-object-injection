@@ -142,13 +142,13 @@ Maven Coordinates:
 <dependency>
  <groupId>org.junit.jupiter</groupId>
  <artifactId>junit-jupiter-api</artifactId>
- <version>5.6.2</version>
+ <version>5.8.2</version>
  <scope>test</scope>
 </dependency>
 <dependency>
  <groupId>org.mockito</groupId>
  <artifactId>mockito-core</artifactId>
- <version>3.5.0</version>
+ <version>4.3.1</version>
  <scope>test</scope>
 </dependency>
 <dependency>
