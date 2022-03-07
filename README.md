@@ -55,7 +55,7 @@ class MyControllerTest {
  }
 ```
 
-* Testing a "unit" of code is a unit test. In Java, typically a class is the smallest unit of code.
+* Testing a "unit" of code is a unit test. In Java, typically a class is the smallest unit of code. A static funciton can also be considered a unit of code, but static functions should not be tested using Mock testing for reasons beyond the scope of this document. See: http://misko.hevery.com/2008/12/15/static-methods-are-death-to-testability
 
 ## Example Solution
 
