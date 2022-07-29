@@ -148,13 +148,13 @@ Maven Coordinates:
 <dependency>
  <groupId>org.mockito</groupId>
  <artifactId>mockito-core</artifactId>
- <version>4.3.1</version>
+ <version>4.6.1</version>
  <scope>test</scope>
 </dependency>
 <dependency>
  <groupId>com.github.exabrial</groupId>
  <artifactId>mockito-object-injection</artifactId>
- <version>2.0.2</version>
+ <version>2.1.0</version>
  <scope>test</scope>
 </dependency>
 ```
