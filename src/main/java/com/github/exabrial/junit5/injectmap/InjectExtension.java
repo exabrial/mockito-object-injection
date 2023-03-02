@@ -21,6 +21,20 @@ import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
 
 public class InjectExtension implements BeforeTestExecutionCallback {
+	private static boolean isEnabled = true;
+
+	public static void enable() {
+		isEnabled = true;
+	}
+
+	public static void bypass() {
+		isEnabled = false;
+	}
+
+	public static boolean status() {
+		return isEnabled;
+	}
+
 	@Override
 	public void beforeTestExecution(ExtensionContext context) throws Exception {
 		Object testInstance = context.getTestInstance().get();
@@ -80,20 +94,22 @@ public class InjectExtension implements BeforeTestExecutionCallback {
 	}
 
 	private MethodHandler createMethodHandler(final Map<String, Field> injectMap, final Object injectionTarget,
-			final Map<String, List<Field>> fieldMap, final Object testInstance, final Method postConstructMethod) {
+											  final Map<String, List<Field>> fieldMap, final Object testInstance, final Method postConstructMethod) {
 		return (proxy, invokedMethod, proceedMethod, args) -> {
 			invokedMethod.setAccessible(true);
-			for (String fieldName : injectMap.keySet()) {
-				for (Field targetField : fieldMap.get(fieldName)) {
-					Field sourceField = injectMap.get(fieldName);
-					sourceField.setAccessible(true);
-					targetField.setAccessible(true);
-					targetField.set(injectionTarget, sourceField.get(testInstance));
+			if (InjectExtension.isEnabled) {
+				for (String fieldName : injectMap.keySet()) {
+					for (Field targetField : fieldMap.get(fieldName)) {
+						Field sourceField = injectMap.get(fieldName);
+						sourceField.setAccessible(true);
+						targetField.setAccessible(true);
+						targetField.set(injectionTarget, sourceField.get(testInstance));
+					}
 				}
-			}
-			if (postConstructMethod != null) {
-				postConstructMethod.setAccessible(true);
-				postConstructMethod.invoke(injectionTarget);
+				if (postConstructMethod != null) {
+					postConstructMethod.setAccessible(true);
+					postConstructMethod.invoke(injectionTarget);
+				}
 			}
 			try {
 				return invokedMethod.invoke(injectionTarget, args);
