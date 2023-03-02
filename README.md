@@ -129,6 +129,24 @@ class MyControllerTest {
 
 Ref: https://docs.oracle.com/javaee/7/api/javax/annotation/PostConstruct.html
 
+## Enabling/Disabling Injection Behavior
+
+The InjectExtension provides methods to turn on and off the behavior as well as query the status of injection.
+
+```
+InjectExtension.enable();
+InjectExtension.bypass();
+InjectExtension.status(); // returns true if enabled
+```
+
+It's recommended that if you're using the above APIs that you reset the Injector status between tests.
+
+```
+@AfterEach
+void afterEach() {
+    InjectExtension.enable();
+}
+```
 
 ## License
 
