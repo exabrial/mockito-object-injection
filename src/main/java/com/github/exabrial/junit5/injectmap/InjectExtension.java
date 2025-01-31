@@ -40,7 +40,6 @@ public class InjectExtension implements BeforeTestExecutionCallback {
 	public void beforeTestExecution(ExtensionContext context) throws Exception {
 		final Object testInstance = context.getTestInstance().get();
 		final Class<?> actualTestClazz = testInstance.getClass();
-		System.out.println("actualTestClass: " + actualTestClazz.getName());
 		Class<?> topLevelClass = actualTestClazz;
 		while (topLevelClass.getEnclosingClass() != null) {
 			topLevelClass = topLevelClass.getEnclosingClass();
@@ -55,7 +54,6 @@ public class InjectExtension implements BeforeTestExecutionCallback {
 				.filter(i -> i.getClass() == parentTestClass)
 				.findFirst()
 				.orElse(testInstance);
-		System.out.println("enclosing instance class name: " + parentClassInstance.getClass().getName());
 		final Map<String, Field> injectMap = new HashMap<>();
 		for (Field testClassField : parentClassInstance.getClass().getDeclaredFields()) {
 			if (testClassField.getAnnotation(InjectMocks.class) != null) {
