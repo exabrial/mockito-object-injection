@@ -66,7 +66,6 @@ This JUnit5 extension allows you to arbitrarily set any field on your `@InjectMo
 import com.github.exabrial.junit5.injectmap.InjectionMap;
 import com.github.exabrial.junit5.injectmap.InjectMapExtension;
 
-@TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith({ MockitoExtension.class, InjectExtension.class })
 class MyControllerTest {
  @InjectMocks
@@ -94,6 +93,31 @@ class MyControllerTest {
 }
 ```
 
+## `@Nested` Inner Class Support
+
+`@InjectMocks` and `@InjectionSource` fields can be declared on `@Nested` inner classes. The extension scans all test instances in the hierarchy, so annotations work at any nesting level:
+
+```
+@ExtendWith({ MockitoExtension.class, InjectExtension.class })
+class OuterTest {
+ @Nested
+ class InnerTest {
+  @InjectMocks
+  private MyController myController;
+  @Mock
+  private Authenticator auther;
+  @InjectionSource
+  private Boolean securityEnabled;
+
+  @Test
+  void testDoSomething() throws Exception {
+   securityEnabled = Boolean.TRUE;
+   myController.doSomething();
+  }
+ }
+}
+```
+
 ## @PostConstruct invocation
 
 CDI and SpringFramework allow the use of `@PostConstruct`. This is like a constructor, except the method annotated will be invoked _after_ dependency injection is complete. This extension can be commanded to invoke the method annotated with `@PostConstruct` like so:
@@ -114,7 +138,6 @@ public class MyController {
 ```
 
 ```
-@TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith({ MockitoExtension.class, InjectExtension.class })
 class MyControllerTest {
 
@@ -139,14 +162,7 @@ InjectExtension.bypass();
 InjectExtension.status(); // returns true if enabled
 ```
 
-It's recommended that if you're using the above APIs that you reset the Injector status between tests.
-
-```
-@AfterEach
-void afterEach() {
-    InjectExtension.enable();
-}
-```
+`bypass()` disables injection for the current test only. The extension automatically re-enables injection after each test, so there is no need to manually call `enable()` in `@AfterEach`.
 
 ## License
 
@@ -160,19 +176,19 @@ Maven Coordinates:
 <dependency>
  <groupId>org.junit.jupiter</groupId>
  <artifactId>junit-jupiter-api</artifactId>
- <version>5.8.2</version>
+ <version>5.10.2</version>
  <scope>test</scope>
 </dependency>
 <dependency>
  <groupId>org.mockito</groupId>
  <artifactId>mockito-core</artifactId>
- <version>4.6.1</version>
+ <version>5.11.0</version>
  <scope>test</scope>
 </dependency>
 <dependency>
  <groupId>com.github.exabrial</groupId>
  <artifactId>mockito-object-injection</artifactId>
- <version>2.3.0</version>
+ <version>2.3.1</version>
  <scope>test</scope>
 </dependency>
 ```
