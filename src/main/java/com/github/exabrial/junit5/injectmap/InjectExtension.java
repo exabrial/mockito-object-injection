@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.mockito.InjectMocks;
@@ -20,7 +21,7 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
 
-public class InjectExtension implements BeforeTestExecutionCallback {
+public class InjectExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback {
 	private static boolean isEnabled = true;
 
 	public static void enable() {
@@ -127,6 +128,11 @@ public class InjectExtension implements BeforeTestExecutionCallback {
 				}
 			}
 		};
+	}
+
+	@Override
+	public void afterTestExecution(final ExtensionContext context) throws Exception {
+		isEnabled = true;
 	}
 
 	private MethodFilter createMethodFilter() {
