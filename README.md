@@ -15,7 +15,7 @@ This Junit Extension allows you to inject Strings (or any other object) into you
 
 Take this Spring Controller (or if you're using the far superior and modern CDI framework, think `@AppplicationScoped` instead of `@Controller` and `@Inject` instead of `@Autowired`)
 
-```
+```java
 @Controller
 public class MyController {
  @Value("securityEnabled")
@@ -37,7 +37,7 @@ public class MyController {
 
 If you wanted to write a _true unit test*_ with no external dependencies, you'd probably want to use Mockito mock your dependencies:
 
-```
+```java
 @ExtendWith({ MockitoExtension.class })
 class MyControllerTest {
  @InjectMocks
@@ -62,7 +62,7 @@ class MyControllerTest {
 This JUnit5 extension allows you to arbitrarily set any field on your `@InjectMocks` [class under test] target. The injections happen _very late_; they happen when you call any non-private method on the class under test.
 
 
-```
+```java
 import com.github.exabrial.junit5.injectmap.InjectionMap;
 import com.github.exabrial.junit5.injectmap.InjectMapExtension;
 
@@ -97,7 +97,7 @@ class MyControllerTest {
 
 `@InjectMocks` and `@InjectionSource` fields can be declared on `@Nested` inner classes. The extension scans all test instances in the hierarchy, so annotations work at any nesting level:
 
-```
+```java
 @ExtendWith({ MockitoExtension.class, InjectExtension.class })
 class OuterTest {
  @Nested
@@ -123,7 +123,7 @@ class OuterTest {
 CDI and SpringFramework allow the use of `@PostConstruct`. This is like a constructor, except the method annotated will be invoked _after_ dependency injection is complete. This extension can be commanded to invoke the method annotated with `@PostConstruct` like so:
 
 
-```
+```java
 @ApplicationScoped
 public class MyController {
  @Inject
@@ -137,7 +137,7 @@ public class MyController {
 }
 ```
 
-```
+```java
 @ExtendWith({ MockitoExtension.class, InjectExtension.class })
 class MyControllerTest {
 
@@ -156,7 +156,7 @@ Ref: https://docs.oracle.com/javaee/7/api/javax/annotation/PostConstruct.html
 
 The InjectExtension provides methods to turn on and off the behavior as well as query the status of injection.
 
-```
+```java
 InjectExtension.enable();
 InjectExtension.bypass();
 InjectExtension.status(); // returns true if enabled
@@ -172,7 +172,7 @@ All files are licensed Apache Source License 2.0. Please consider contributing a
 
 Maven Coordinates:
 
-```
+```xml
 <dependency>
  <groupId>org.junit.jupiter</groupId>
  <artifactId>junit-jupiter-api</artifactId>
