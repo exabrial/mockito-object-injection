@@ -13,7 +13,6 @@ import javax.annotation.PostConstruct;
 
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.TestInstances;
 import org.mockito.InjectMocks;
 
 import javassist.util.proxy.MethodFilter;
@@ -37,51 +36,48 @@ public class InjectExtension implements BeforeTestExecutionCallback {
 	}
 
 	@Override
-	public void beforeTestExecution(ExtensionContext context) throws Exception {
-		final Object testInstance = context.getTestInstance().get();
-		final Class<?> actualTestClazz = testInstance.getClass();
-		Class<?> topLevelClass = actualTestClazz;
-		while (topLevelClass.getEnclosingClass() != null) {
-			topLevelClass = topLevelClass.getEnclosingClass();
-		}
-		final Class<?> parentTestClass = topLevelClass != actualTestClazz ? topLevelClass : null;
-
-		final Object parentClassInstance = context
-				.getTestInstances()
-				.get()
-				.getEnclosingInstances()
-				.stream()
-				.filter(i -> i.getClass() == parentTestClass)
-				.findFirst()
-				.orElse(testInstance);
+	public void beforeTestExecution(final ExtensionContext context) throws Exception {
+		final List<Object> allInstances = context.getTestInstances().get().getAllInstances();
 		final Map<String, Field> injectMap = new HashMap<>();
-		for (Field testClassField : parentClassInstance.getClass().getDeclaredFields()) {
-			if (testClassField.getAnnotation(InjectMocks.class) != null) {
-				testClassField.setAccessible(true);
-				final Object injectionTarget = testClassField.get(parentClassInstance);
-				final ProxyFactory proxyFactory = new ProxyFactory();
-				proxyFactory.setSuperclass(injectionTarget.getClass());
-				proxyFactory.setFilter(createMethodFilter());
-				final Class<?> proxyClass = proxyFactory.createClass();
-				final Object proxy = proxyClass.newInstance();
-				final Map<String, List<Field>> fieldMap = createFieldMap(injectionTarget.getClass());
-				Method postConstructMethod;
-				if (testClassField.getAnnotation(InvokePostConstruct.class) != null) {
-					postConstructMethod = findPostConstructMethod(injectionTarget);
-				} else {
-					postConstructMethod = null;
+		final Map<String, Object> injectSourceOwners = new HashMap<>();
+
+		for (final Object instance : allInstances) {
+			for (final Field field : instance.getClass().getDeclaredFields()) {
+				if (field.getAnnotation(InjectionSource.class) != null) {
+					injectMap.put(field.getName(), field);
+					injectSourceOwners.put(field.getName(), instance);
 				}
-				final MethodHandler handler = createMethodHandler(injectMap, injectionTarget, fieldMap, parentClassInstance, postConstructMethod);
-				((Proxy) proxy).setHandler(handler);
-				testClassField.set(parentClassInstance, proxy);
-			} else if (testClassField.getAnnotation(InjectionSource.class) != null) {
-				injectMap.put(testClassField.getName(), testClassField);
+			}
+		}
+
+		for (final Object instance : allInstances) {
+			for (final Field testClassField : instance.getClass().getDeclaredFields()) {
+				if (testClassField.getAnnotation(InjectMocks.class) != null) {
+					testClassField.setAccessible(true);
+					final Object injectionTarget = testClassField.get(instance);
+					final ProxyFactory proxyFactory = new ProxyFactory();
+					proxyFactory.setSuperclass(injectionTarget.getClass());
+					proxyFactory.setFilter(createMethodFilter());
+					final Class<?> proxyClass = proxyFactory.createClass();
+					final Object proxy = proxyClass.newInstance();
+					final Map<String, List<Field>> fieldMap = createFieldMap(injectionTarget.getClass());
+					Method postConstructMethod;
+					if (testClassField.getAnnotation(InvokePostConstruct.class) != null) {
+						postConstructMethod = findPostConstructMethod(injectionTarget);
+					} else {
+						postConstructMethod = null;
+					}
+					final MethodHandler handler = createMethodHandler(injectMap, injectionTarget, fieldMap, injectSourceOwners,
+							postConstructMethod);
+					((Proxy) proxy).setHandler(handler);
+					testClassField.set(instance, proxy);
+				}
 			}
 		}
 	}
 
-	private Method findPostConstructMethod(Object injectionTarget) {
-		for (Method method : injectionTarget.getClass().getDeclaredMethods()) {
+	private Method findPostConstructMethod(final Object injectionTarget) {
+		for (final Method method : injectionTarget.getClass().getDeclaredMethods()) {
 			if (method.isAnnotationPresent(PostConstruct.class)) {
 				return method;
 			}
@@ -90,12 +86,12 @@ public class InjectExtension implements BeforeTestExecutionCallback {
 				"@InvokePostConstruct is declared on:" + injectionTarget + " however no method annotated with @PostConstruct found");
 	}
 
-	private Map<String, List<Field>> createFieldMap(Class<?> targetClass) {
+	private Map<String, List<Field>> createFieldMap(final Class<?> targetClass) {
 		if (targetClass == Object.class) {
 			return new HashMap<>();
 		} else {
-			Map<String, List<Field>> fieldMap = createFieldMap(targetClass.getSuperclass());
-			for (Field field : targetClass.getDeclaredFields()) {
+			final Map<String, List<Field>> fieldMap = createFieldMap(targetClass.getSuperclass());
+			for (final Field field : targetClass.getDeclaredFields()) {
 				fieldMap.computeIfAbsent(field.getName(), k -> new LinkedList<>()).add(field);
 			}
 			return fieldMap;
@@ -103,16 +99,17 @@ public class InjectExtension implements BeforeTestExecutionCallback {
 	}
 
 	private MethodHandler createMethodHandler(final Map<String, Field> injectMap, final Object injectionTarget,
-											  final Map<String, List<Field>> fieldMap, final Object testInstance, final Method postConstructMethod) {
+			final Map<String, List<Field>> fieldMap, final Map<String, Object> injectSourceOwners, final Method postConstructMethod) {
 		return (proxy, invokedMethod, proceedMethod, args) -> {
 			invokedMethod.setAccessible(true);
 			if (InjectExtension.isEnabled) {
-				for (String fieldName : injectMap.keySet()) {
-					for (Field targetField : fieldMap.get(fieldName)) {
-						Field sourceField = injectMap.get(fieldName);
+				for (final String fieldName : injectMap.keySet()) {
+					for (final Field targetField : fieldMap.get(fieldName)) {
+						final Field sourceField = injectMap.get(fieldName);
+						final Object sourceOwner = injectSourceOwners.get(fieldName);
 						sourceField.setAccessible(true);
 						targetField.setAccessible(true);
-						targetField.set(injectionTarget, sourceField.get(testInstance));
+						targetField.set(injectionTarget, sourceField.get(sourceOwner));
 					}
 				}
 				if (postConstructMethod != null) {
@@ -122,7 +119,7 @@ public class InjectExtension implements BeforeTestExecutionCallback {
 			}
 			try {
 				return invokedMethod.invoke(injectionTarget, args);
-			} catch (InvocationTargetException itEx) {
+			} catch (final InvocationTargetException itEx) {
 				if (null != itEx.getCause()) {
 					throw itEx.getCause();
 				} else {
